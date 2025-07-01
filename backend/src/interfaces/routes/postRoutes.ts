@@ -11,5 +11,9 @@ const postService = new PostService(postRepository);
 const postController = new PostController(postService);
 
 router.post('/', authMiddleware, (req, res) => postController.createPost(req, res));
+router.get('/', (req, res) => postController.getPosts(req, res));
+router.get('/author', authMiddleware, (req, res) => postController.getPostsByAuthor(req, res));
+router.put('/:id', authMiddleware, (req, res) => postController.updatePost(req, res));
+router.delete('/:id', authMiddleware, (req, res) => postController.deletePost(req, res));
 
 export default router;
