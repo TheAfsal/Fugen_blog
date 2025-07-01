@@ -6,6 +6,7 @@ import { updatePost as updatePostAction } from "../store/slices/postSlice";
 import { Post } from "../types/Post";
 import { AxiosError } from "axios";
 import { Button } from "./ui/button";
+import { PostFormData, PostSchema } from "@/types/schema/PostSchema";
 
 export const EditPost = ({ post }: { post: Post | null }) => {
   const [title, setTitle] = useState(post?.title || "");
@@ -24,15 +25,24 @@ export const EditPost = ({ post }: { post: Post | null }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!id) return;
+    if (!id) {
+      setError('Post ID is missing');
+      return;
+    }
     try {
+      const data: PostFormData = { title, content };
+      const result = PostSchema.safeParse(data);
+      if (!result.success) {
+        setError(result.error.errors[0].message);
+        return;
+      }
+
       const updatedPost = await updatePost(id, { title, content });
       dispatch(updatePostAction(updatedPost));
-      navigate("/");
+      navigate('/');
     } catch (err) {
-        const error = err as AxiosError<{ message?: string }>;
+      const error = err as AxiosError<{ message?: string }>;
       setError(error.response?.data?.message || 'Failed to update post');
-      setError("");
     }
   };
 

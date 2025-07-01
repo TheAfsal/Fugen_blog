@@ -5,6 +5,7 @@ import { loginUser } from "../services/api";
 import { setCredentials } from "../store/slices/authSlice";
 import { AxiosError } from "axios";
 import { Button } from "./ui/button";
+import { AuthenticateSchema, AuthenticateFormData } from "@/types/schema/AuthenticateSchema";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
@@ -16,12 +17,19 @@ export const Login = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const data: AuthenticateFormData = { email, password };
+      const result = AuthenticateSchema.safeParse(data);
+      if (!result.success) {
+        setError(result.error.errors[0].message);
+        return;
+      }
+
       const { user } = await loginUser(email, password);
       dispatch(setCredentials({ user }));
-      navigate("/");
+      navigate('/');
     } catch (err) {
       const error = err as AxiosError<{ message?: string }>;
-      setError(error.response?.data?.message || "Login failed");
+      setError(error.response?.data?.message || 'Login failed');
     }
   };
 

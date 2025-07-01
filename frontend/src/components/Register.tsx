@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { registerUser } from "../services/api";
 import { setCredentials } from "../store/slices/authSlice";
 import { AxiosError } from "axios";
+import { AuthenticateFormData, AuthenticateSchema } from "@/types/schema/AuthenticateSchema";
 
 export const Register = () => {
   const [email, setEmail] = useState("");
@@ -15,12 +16,19 @@ export const Register = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const data: AuthenticateFormData = { email, password };
+      const result = AuthenticateSchema.safeParse(data);
+      if (!result.success) {
+        setError(result.error.errors[0].message);
+        return;
+      }
+
       const { user } = await registerUser(email, password);
       dispatch(setCredentials({ user }));
-      navigate("/");
+      navigate('/');
     } catch (err) {
       const error = err as AxiosError<{ message?: string }>;
-      setError(error.response?.data?.message || "Registration failed");
+      setError(error.response?.data?.message || 'Registration failed');
     }
   };
 

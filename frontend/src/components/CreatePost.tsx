@@ -5,6 +5,7 @@ import { createPost } from "../services/api";
 import { addPost } from "../store/slices/postSlice";
 import { AxiosError } from "axios";
 import { Button } from "./ui/button";
+import { PostFormData, PostSchema } from "@/types/schema/PostSchema";
 
 export const CreatePost = () => {
   const [title, setTitle] = useState("");
@@ -16,12 +17,19 @@ export const CreatePost = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const data: PostFormData = { title, content };
+      const result = PostSchema.safeParse(data);
+      if (!result.success) {
+        setError(result.error.errors[0].message);
+        return;
+      }
+
       const post = await createPost({ title, content });
       dispatch(addPost(post));
-      navigate("/");
+      navigate('/');
     } catch (err) {
       const error = err as AxiosError<{ message?: string }>;
-      setError(error.response?.data?.message || "Failed to create post");
+      setError(error.response?.data?.message || 'Failed to create post');
     }
   };
 

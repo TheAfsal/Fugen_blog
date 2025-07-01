@@ -31,6 +31,7 @@ export class UserController {
       res.cookie('fugen-id', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', maxAge: 3600000 });
       res.status(200).json({ user, token });
     } catch (error) {
+      console.log(error);
       res.status(400).json({ message: (error as Error).message });
     }
   }

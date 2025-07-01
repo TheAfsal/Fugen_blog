@@ -8,4 +8,9 @@ export const pool = createPool({
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || 'your_mysql_password',
   database: process.env.DB_NAME || 'blogs_db',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
+  connectTimeout: 10000, 
+  idleTimeout: 60000,
 });
