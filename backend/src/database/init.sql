@@ -1,0 +1,18 @@
+CREATE DATABASE blogs_db;
+USE blogs_db;
+
+CREATE TABLE users (
+  id VARCHAR(36) PRIMARY KEY,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  createdAt DATETIME NOT NULL
+);
+
+CREATE TABLE posts (
+  id VARCHAR(36) PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  content TEXT NOT NULL,
+  authorId VARCHAR(36) NOT NULL,
+  createdAt DATETIME NOT NULL,
+  FOREIGN KEY (authorId) REFERENCES users(id)
+);
