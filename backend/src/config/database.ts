@@ -11,6 +11,7 @@ export const pool = createPool({
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
-  connectTimeout: 10000, 
-  idleTimeout: 60000,
+  connectTimeout: 30000,
+  keepAliveInitialDelay: 10000,
+  enableKeepAlive: true,
 });

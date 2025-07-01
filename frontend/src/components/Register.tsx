@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { registerUser } from "../services/api";
 import { setCredentials } from "../store/slices/authSlice";
 import { AxiosError } from "axios";
 import { AuthenticateFormData, AuthenticateSchema } from "@/types/schema/AuthenticateSchema";
+import { Button } from "./ui/button";
 
 export const Register = () => {
   const [email, setEmail] = useState("");
@@ -33,7 +34,7 @@ export const Register = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-30 p-6 bg-white rounded shadow">
+    <div className="max-w-md mx-auto mt-30 p-6 rounded shadow">
       <h2 className="text-2xl mb-4">Register</h2>
       {error && <p className="text-red-500">{error}</p>}
       <form onSubmit={handleSubmit}>
@@ -57,12 +58,10 @@ export const Register = () => {
             required
           />
         </div>
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white p-2 rounded"
-        >
-          Register
-        </button>
+        
+        <Button className="w-full" onClick={handleSubmit}>
+          <Link to="/login">Register</Link>
+        </Button>
       </form>
     </div>
   );

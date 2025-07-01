@@ -5,7 +5,10 @@ import { loginUser } from "../services/api";
 import { setCredentials } from "../store/slices/authSlice";
 import { AxiosError } from "axios";
 import { Button } from "./ui/button";
-import { AuthenticateSchema, AuthenticateFormData } from "@/types/schema/AuthenticateSchema";
+import {
+  AuthenticateSchema,
+  AuthenticateFormData,
+} from "@/types/schema/AuthenticateSchema";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
@@ -26,15 +29,15 @@ export const Login = () => {
 
       const { user } = await loginUser(email, password);
       dispatch(setCredentials({ user }));
-      navigate('/');
+      navigate("/");
     } catch (err) {
       const error = err as AxiosError<{ message?: string }>;
-      setError(error.response?.data?.message || 'Login failed');
+      setError(error.response?.data?.message || "Login failed");
     }
   };
 
   return (
-    <div className="max-w-md mx-auto mt-30 p-6 bg-white rounded shadow">
+    <div className="max-w-md mx-auto mt-30 p-6 rounded shadow">
       <h2 className="text-2xl mb-4">Login</h2>
       {error && <p className="text-red-500">{error}</p>}
       <form>

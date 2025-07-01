@@ -1,56 +1,3 @@
-// import { useSelector, useDispatch } from "react-redux";
-// import { RootState } from "../../store";
-// import { logout } from "../../store/slices/authSlice";
-// import { Link, useNavigate } from "react-router-dom";
-// import { logoutUser } from "@/services/api";
-
-// export const Navbar = () => {
-//   const { user } = useSelector((state: RootState) => state.auth);
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate();
-
-//   const handleLogout = async () => {
-//     await logoutUser();
-//     dispatch(logout());
-//     navigate("/login");
-//   };
-
-//   return (
-//     <nav className="bg-blue-600 text-white p-4">
-//       <div className="container mx-auto flex justify-between items-center">
-//         <Link to="/" className="text-2xl font-bold">
-//           Blog App
-//         </Link>
-//         <div>
-//           {user ? (
-//             <>
-//               <span className="mr-4">Welcome, {user.email}</span>
-//               <Link to="/" className="mr-4">
-//                 Home
-//               </Link>
-//               <button
-//                 onClick={handleLogout}
-//                 className="bg-red-500 px-4 py-2 rounded"
-//               >
-//                 Logout
-//               </button>
-//             </>
-//           ) : (
-//             <>
-//               <Link to="/login" className="mr-4">
-//                 Login
-//               </Link>
-//               <Link to="/register">Register</Link>
-//             </>
-//           )}
-//         </div>
-//       </div>
-//     </nav>
-//   );
-// };
-
-"use client";
-
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSelector, useDispatch } from "react-redux";
@@ -60,7 +7,6 @@ import {
   X,
   Sun,
   Moon,
-  User,
   LogOut,
   Home,
   BookOpen,
@@ -123,7 +69,7 @@ export const Navbar = () => {
       animate={{ y: 0 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-white/80 dark:bg-brand-primary/80 backdrop-blur-md shadow-lg"
+          ? "dark:bg-brand-primary/80 backdrop-blur-md shadow-lg"
           : "bg-transparent"
       }`}
     >
@@ -195,13 +141,6 @@ export const Navbar = () => {
                       <p className="font-medium">{user.email}</p>
                     </div>
                   </div>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link to="/profile" className="flex items-center">
-                      <User className="mr-2 h-4 w-4" />
-                      Profile
-                    </Link>
-                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="mr-2 h-4 w-4" />

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Calendar,
   ArrowLeft,
@@ -17,10 +17,14 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import type { RootState } from "../store";
+import { deletePost as deletePostApi } from '../services/api';
+import { AxiosError } from "axios";
+import { deletePost } from "@/store/slices/postSlice";
 
 export const SingleBlogPost = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { posts } = useSelector((state: RootState) => state.posts);
   const { user } = useSelector((state: RootState) => state.auth);
 
@@ -40,20 +44,19 @@ export const SingleBlogPost = () => {
     );
   }
 
-  const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: post.title,
-          text: post.content.substring(0, 100) + "...",
-          url: window.location.href,
-        });
-      } catch (err) {
-        console.log("Error sharing:", err);
-      }
-    } else {
-      // Fallback: copy to clipboard
-      navigator.clipboard.writeText(window.location.href);
+  const handleShare = async () => {};
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deletePostApi(id);
+      dispatch(deletePost(id));
+    } catch (err) {
+      const error = err as AxiosError<{ message?: string }>;
+      console.log(error);
+  
+      // dispatch(
+      //   setError(error.response?.data?.message || "Failed to delete post")
+      // );
     }
   };
 
@@ -105,6 +108,7 @@ export const SingleBlogPost = () => {
                     variant="outline"
                     size="sm"
                     className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white bg-transparent"
+                    onClick={()=>handleDelete(post.id)}
                   >
                     <Trash2 className="w-4 h-4 mr-2" />
                     Delete
