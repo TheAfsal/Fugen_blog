@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../services/api";
 import { setCredentials } from "../store/slices/authSlice";
 import { AxiosError } from "axios";
+import { Button } from "./ui/button";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
@@ -25,10 +26,10 @@ export const Login = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
+    <div className="max-w-md mx-auto mt-30 p-6 bg-white rounded shadow">
       <h2 className="text-2xl mb-4">Login</h2>
       {error && <p className="text-red-500">{error}</p>}
-      <form onSubmit={handleSubmit}>
+      <form>
         <div className="mb-4">
           <label className="block text-gray-700">Email</label>
           <input
@@ -49,12 +50,9 @@ export const Login = () => {
             required
           />
         </div>
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white p-2 rounded"
-        >
-          Login
-        </button>
+        <Button className="w-full" onClick={handleSubmit}>
+          <Link to="/login">Login</Link>
+        </Button>
       </form>
     </div>
   );

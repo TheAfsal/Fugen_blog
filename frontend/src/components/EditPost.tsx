@@ -5,6 +5,7 @@ import { updatePost } from "../services/api";
 import { updatePost as updatePostAction } from "../store/slices/postSlice";
 import { Post } from "../types/Post";
 import { AxiosError } from "axios";
+import { Button } from "./ui/button";
 
 export const EditPost = ({ post }: { post: Post | null }) => {
   const [title, setTitle] = useState(post?.title || "");
@@ -60,12 +61,12 @@ export const EditPost = ({ post }: { post: Post | null }) => {
             required
           />
         </div>
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white p-2 rounded"
-        >
+        <Button
+          className="w-full p-2 rounded"
+          onClick={handleSubmit}
+          >
           Update Post
-        </button>
+        </Button>
       </form>
     </div>
   );

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { createPost } from "../services/api";
 import { addPost } from "../store/slices/postSlice";
 import { AxiosError } from "axios";
+import { Button } from "./ui/button";
 
 export const CreatePost = () => {
   const [title, setTitle] = useState("");
@@ -49,12 +50,12 @@ export const CreatePost = () => {
             required
           />
         </div>
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white p-2 rounded"
+        <Button
+          className="w-full p-2 rounded"
+          onClick={handleSubmit}
         >
           Create Post
-        </button>
+        </Button>
       </form>
     </div>
   );
