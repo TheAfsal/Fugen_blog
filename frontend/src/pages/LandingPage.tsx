@@ -109,7 +109,7 @@ export const LandingPage = () => {
                   <Button
                     asChild
                     size="lg"
-                    className="bg-brand-primary hover:bg-brand-primary/90 text-white px-8 py-4 text-lg rounded-xl"
+                    className=" text-white px-8 py-4 text-lg rounded-xl"
                   >
                     <Link to="/register" className="flex items-center">
                       Get Started Free

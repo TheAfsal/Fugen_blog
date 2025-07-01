@@ -32,12 +32,12 @@ function App() {
         }
       } catch (error) {
         console.error("Token verification failed:", error);
-        if (
-          window.location.pathname !== "/login" &&
-          window.location.pathname !== "/register"
-        ) {
-          navigate("/login");
-        }
+        // if (
+        //   window.location.pathname !== "/login" &&
+        //   window.location.pathname !== "/register"
+        // ) {
+        //   navigate("/login");
+        // }
       }
     };
     checkAuth();
