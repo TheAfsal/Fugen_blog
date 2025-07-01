@@ -44,5 +44,14 @@ export class UserController {
       res.status(401).json({ message: (error as Error).message });
     }
   }
+
+  async logout(req: Request, res: Response) {
+    try {
+      res.clearCookie('fugen-id', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict' });
+      res.status(200).json({ message: 'Logged out successfully' });
+    } catch (error) {
+      res.status(400).json({ message: (error as Error).message });
+    }
+  }
   
 }

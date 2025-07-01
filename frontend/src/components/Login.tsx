@@ -15,8 +15,8 @@ export const Login = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const { user, token } = await loginUser(email, password);
-      dispatch(setCredentials({ user, token }));
+      const { user } = await loginUser(email, password);
+      dispatch(setCredentials({ user }));
       navigate("/");
     } catch (err) {
       const error = err as AxiosError<{ message?: string }>;
