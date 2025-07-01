@@ -17,7 +17,9 @@ export class UserService {
 
   async registerUser(dto: RegisterUserDTO): Promise<User> {
     const errors = await validate(dto);
-    if (errors.length > 0) throw new Error("Invalid user data");
+    if (errors.length > 0) {
+      throw Object.assign(new Error(errors[0].constraints?.[Object.keys(errors[0].constraints)[0]] || 'Invalid user data'), { statusCode: 400 });
+    }
 
     return this.registerUserUseCase.execute({
       email: dto.email,
@@ -27,7 +29,9 @@ export class UserService {
 
   async loginUser(dto: LoginUserDTO): Promise<User> {
     const errors = await validate(dto);
-    if (errors.length > 0) throw new Error("Invalid login data");
+    if (errors.length > 0) {
+      throw Object.assign(new Error(errors[0].constraints?.[Object.keys(errors[0].constraints)[0]] || 'Invalid login data'), { statusCode: 400 });
+    }
 
     return this.loginUserUseCase.execute({
       email: dto.email,

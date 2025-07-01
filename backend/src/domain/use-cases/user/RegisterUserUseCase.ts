@@ -7,8 +7,10 @@ export class RegisterUserUseCase {
 
   async execute(data: Omit<User, 'id' | 'createdAt'>): Promise<User> {
     const existingUser = await this.userRepository.findByEmail(data.email);
-    if (existingUser) throw new Error('User already exists');
-
+    if (existingUser) {
+      throw Object.assign(new Error('User already exists'), { statusCode: 400 });
+    }
+    
     const user: User = {
       ...data,
       id: Math.random().toString(36).substr(2, 9),

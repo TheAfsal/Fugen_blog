@@ -10,9 +10,9 @@ const userRepository = new MySQLUserRepository(pool);
 const userService = new UserService(userRepository);
 const userController = new UserController(userService);
 
-router.post("/register", (req, res) => userController.register(req, res));
-router.post("/login", (req, res) => userController.login(req, res));
-router.get("/verify", authMiddleware, (req, res) => userController.verify(req, res));
-router.post("/logout", (req, res) => userController.logout(req, res));
+router.post("/register", userController.register);
+router.post("/login", userController.login);
+router.get("/verify", authMiddleware, userController.verify);
+router.post("/logout", userController.logout);
 
 export default router;

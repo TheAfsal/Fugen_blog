@@ -23,9 +23,12 @@ export const authMiddleware = (
   next: NextFunction
 ) => {
   const token = req.cookies["fugen-id"];
-  console.log(token);
   if (!token) {
-    res.status(401).json({ message: "Unauthorized: No token provided" });
+    next(
+      Object.assign(new Error("Unauthorized: No token provided"), {
+        statusCode: 401,
+      })
+    );
     return;
   }
 
@@ -34,6 +37,11 @@ export const authMiddleware = (
     req.user = decoded;
     next();
   } catch (error) {
-    res.status(401).json({ message: "Invalid token" });
+    next(
+      Object.assign(new Error("Unauthorized: Invalid token"), {
+        statusCode: 401,
+      })
+    );
+    return;
   }
 };

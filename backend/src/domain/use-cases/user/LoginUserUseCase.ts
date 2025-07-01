@@ -7,10 +7,13 @@ export class LoginUserUseCase {
 
   async execute(data: Omit<User, "id" | "createdAt">): Promise<User> {
     const user = await this.userRepository.findByEmail(data.email);
-    if (!user) throw new Error("Invalid email or password");
-
+    if (!user) {
+      throw Object.assign(new Error('Invalid email or password'), { statusCode: 401 });
+    }
     const isPasswordValid = await compare(data.password, user.password);
-    if (!isPasswordValid) throw new Error("Invalid email or password");
+    if (!isPasswordValid) {
+      throw Object.assign(new Error('Invalid email or password'), { statusCode: 401 });
+    }
 
     return user;
   }
