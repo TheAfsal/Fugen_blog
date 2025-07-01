@@ -17,7 +17,7 @@ export class UserController {
       res.cookie("fugen-id", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
+        sameSite: "none",
         maxAge: 3600000,
       });
       res.status(201).json({ user, token });
@@ -36,7 +36,7 @@ export class UserController {
       res.cookie("fugen-id", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
+        sameSite: "none",
         maxAge: 3600000,
       });
       res.status(200).json({ user, token });
@@ -61,7 +61,7 @@ export class UserController {
       res.clearCookie("fugen-id", {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
+        sameSite: "none",
       });
       res.status(200).json({ message: "Logged out successfully" });
     } catch (error) {
