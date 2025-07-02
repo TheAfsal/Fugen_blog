@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { registerUser } from "../services/api";
+import { registerUser } from "../services/user.api";
 import { setCredentials } from "../store/slices/authSlice";
 import { AxiosError } from "axios";
-import { AuthenticateFormData, AuthenticateSchema } from "@/types/schema/AuthenticateSchema";
+import {
+  AuthenticateFormData,
+  AuthenticateSchema,
+} from "@/types/schema/AuthenticateSchema";
 import { Button } from "./ui/button";
 
 export const Register = () => {
@@ -26,10 +29,10 @@ export const Register = () => {
 
       const { user } = await registerUser(email, password);
       dispatch(setCredentials({ user }));
-      navigate('/');
+      navigate("/");
     } catch (err) {
       const error = err as AxiosError<{ message?: string }>;
-      setError(error.response?.data?.message || 'Registration failed');
+      setError(error.response?.data?.message || "Registration failed");
     }
   };
 
@@ -58,7 +61,7 @@ export const Register = () => {
             required
           />
         </div>
-        
+
         <Button className="w-full" onClick={handleSubmit}>
           <Link to="/login">Register</Link>
         </Button>

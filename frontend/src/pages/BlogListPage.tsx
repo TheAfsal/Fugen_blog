@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { RootState } from "../store";
-import { getPosts, deletePost as deletePostApi } from "../services/api";
+import { getPosts, deletePost as deletePostApi } from "../services/post.api";
 import {
   setPosts,
   deletePost,
@@ -27,6 +27,9 @@ import type { AxiosError } from "axios";
 export const BlogListPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("newest");
+  const [page, setPage] = useState(1);
+  const [limit] = useState(9);
+  const [total, setTotal] = useState(0);
 
   const { posts, loading, error } = useSelector(
     (state: RootState) => state.posts
@@ -39,8 +42,9 @@ export const BlogListPage = () => {
     const fetchPosts = async () => {
       dispatch(setLoading());
       try {
-        const data = await getPosts();
-        dispatch(setPosts(data));
+        const data = await getPosts(page, limit, searchTerm);
+        dispatch(setPosts(data.posts));
+        setTotal(data.total);
       } catch (err) {
         const error = err as AxiosError<{ message?: string }>;
         dispatch(
@@ -49,7 +53,7 @@ export const BlogListPage = () => {
       }
     };
     fetchPosts();
-  }, [dispatch]);
+  }, [dispatch, page, limit, searchTerm]);
 
   const handleDelete = async (id: string) => {
     try {
@@ -63,28 +67,34 @@ export const BlogListPage = () => {
     }
   };
 
-  const filteredPosts = posts
-    .filter(
-      (post) =>
-        post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        post.content.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    .sort((a, b) => {
-      switch (sortBy) {
-        case "newest":
-          return (
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-          );
-        case "oldest":
-          return (
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-          );
-        case "title":
-          return a.title.localeCompare(b.title);
-        default:
-          return 0;
-      }
-    });
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setPage(1);
+  };
+
+  const filteredPosts = [...posts].sort((a, b) => {
+    switch (sortBy) {
+      case "newest":
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      case "oldest":
+        return (
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+      case "title":
+        return a.title.localeCompare(b.title);
+      default:
+        return 0;
+    }
+  });
+
+  const totalPages = Math.ceil(total / limit);
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -126,7 +136,7 @@ export const BlogListPage = () => {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="flex flex-col md:flex-row gap-4 mb-8"
         >
-          <div className="relative flex-1">
+          <form onSubmit={handleSearch} className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <Input
               placeholder="Search posts..."
@@ -134,7 +144,7 @@ export const BlogListPage = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 h-12 rounded-xl border-2 focus:border-brand-mint"
             />
-          </div>
+          </form>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -167,12 +177,33 @@ export const BlogListPage = () => {
           {user && (
             <Button
               onClick={() => navigate("/create")}
-              className="h-12 px-6 rounded-xl "
+              className="h-12 px-6 rounded-xl"
             >
               Create Post
             </Button>
           )}
         </motion.div>
+
+        {/* Pagination */}
+        {/* <div className="flex justify-between items-center mb-8">
+          <Button
+            onClick={() => handlePageChange(page - 1)}
+            disabled={page === 1}
+            className="h-10 px-4"
+          >
+            Previous
+          </Button>
+          <span>
+            Page {page} of {totalPages}
+          </span>
+          <Button
+            onClick={() => handlePageChange(page + 1)}
+            disabled={page === totalPages}
+            className="h-10 px-4"
+          >
+            Next
+          </Button>
+        </div> */}
 
         {/* Loading State */}
         {loading && (
@@ -316,6 +347,29 @@ export const BlogListPage = () => {
             ))}
           </motion.div>
         </AnimatePresence>
+
+        {/* Pagination */}
+        {!loading && !error && filteredPosts.length > 0 && (
+          <div className="flex justify-between items-center mt-8">
+            <Button
+              onClick={() => handlePageChange(page - 1)}
+              disabled={page === 1}
+              className="h-10 px-4"
+            >
+              Previous
+            </Button>
+            <span>
+              Page {page} of {totalPages}
+            </span>
+            <Button
+              onClick={() => handlePageChange(page + 1)}
+              disabled={page === totalPages}
+              className="h-10 px-4"
+            >
+              Next
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

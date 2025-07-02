@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { RootState } from "../store";
+import heroImage from "/heroImage.jpg";
 
 const features = [
   {
@@ -134,13 +135,18 @@ export const LandingPage = () => {
               transition={{ duration: 0.8, delay: 0.4 }}
               className="relative max-w-4xl mx-auto"
             >
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 border">
-                <div className="aspect-video bg-gradient-to-br from-brand-mint/20 to-brand-coral/20 rounded-xl flex items-center justify-center">
-                  <div className="text-center">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-1 border">
+                <div
+                  className="aspect-video rounded-xl flex items-center justify-center bg-cover bg-center"
+                  style={{
+                    backgroundImage: `url(${heroImage})`,
+                  }}
+                >
+                  <div className="text-center rounded-xl">
                     <div className="w-16 h-16 bg-brand-primary rounded-full flex items-center justify-center mx-auto mb-4">
                       <Zap className="w-8 h-8 text-white" />
                     </div>
-                    <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">
+                    <p className="text-lg font-semibold text-gray-100 dark:text-gray-300">
                       Beautiful, Fast, Modern
                     </p>
                   </div>

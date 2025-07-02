@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { setCredentials } from "./store/slices/authSlice";
-import { verifyToken } from "./services/api";
+import { verifyToken } from "./services/user.api";
 import { RegisterPage } from "./pages/RegisterPage";
 import { LoginPage } from "./pages/LoginPage";
 import { EditPostPage } from "./pages/EditPostPage";

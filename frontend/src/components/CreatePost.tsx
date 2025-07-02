@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { createPost } from "../services/api";
+import { createPost } from "../services/post.api";
 import { addPost } from "../store/slices/postSlice";
 import { AxiosError } from "axios";
 import { Button } from "./ui/button";
@@ -26,10 +26,10 @@ export const CreatePost = () => {
 
       const post = await createPost({ title, content });
       dispatch(addPost(post));
-      navigate('/');
+      navigate("/");
     } catch (err) {
       const error = err as AxiosError<{ message?: string }>;
-      setError(error.response?.data?.message || 'Failed to create post');
+      setError(error.response?.data?.message || "Failed to create post");
     }
   };
 
@@ -58,10 +58,7 @@ export const CreatePost = () => {
             required
           />
         </div>
-        <Button
-          className="w-full p-2 rounded"
-          onClick={handleSubmit}
-        >
+        <Button className="w-full p-2 rounded" onClick={handleSubmit}>
           Create Post
         </Button>
       </form>

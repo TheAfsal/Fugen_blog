@@ -17,7 +17,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import type { RootState } from "../store";
-import { deletePost as deletePostApi } from '../services/api';
+import { deletePost as deletePostApi } from "../services/post.api";
 import { AxiosError } from "axios";
 import { deletePost } from "@/store/slices/postSlice";
 
@@ -53,7 +53,7 @@ export const SingleBlogPost = () => {
     } catch (err) {
       const error = err as AxiosError<{ message?: string }>;
       console.log(error);
-  
+
       // dispatch(
       //   setError(error.response?.data?.message || "Failed to delete post")
       // );
@@ -108,7 +108,7 @@ export const SingleBlogPost = () => {
                     variant="outline"
                     size="sm"
                     className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white bg-transparent"
-                    onClick={()=>handleDelete(post.id)}
+                    onClick={() => handleDelete(post.id)}
                   >
                     <Trash2 className="w-4 h-4 mr-2" />
                     Delete

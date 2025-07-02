@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { loginUser } from "../services/api";
+import { loginUser } from "../services/user.api";
 import { setCredentials } from "../store/slices/authSlice";
 import { AxiosError } from "axios";
 import { Button } from "./ui/button";

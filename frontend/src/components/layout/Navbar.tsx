@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import type { RootState } from "../../store";
 import { logout } from "../../store/slices/authSlice";
-import { logoutUser } from "../../services/api";
+import { logoutUser } from "../../services/user.api";
 import logo from "/blog-web-logo.png";
 
 const navItems = [

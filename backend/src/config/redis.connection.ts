@@ -1,9 +1,9 @@
-import { createClient } from 'redis';
+import { createClient, RedisClientType } from 'redis';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-export const redis = createClient({
+export const redis: RedisClientType = createClient({
   url: process.env.REDIS_URL || 'redis://redis-container:6379',
 });
 
@@ -18,3 +18,5 @@ redis.on('connect', () => {
 redis.on('error', (err) => {
   console.error('Redis error:', err);
 });
+
+export type RedisClient = RedisClientType;

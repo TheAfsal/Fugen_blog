@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { updatePost } from "../services/api";
+import { updatePost } from "../services/post.api";
 import { updatePost as updatePostAction } from "../store/slices/postSlice";
 import { Post } from "../types/Post";
 import { AxiosError } from "axios";
@@ -26,7 +26,7 @@ export const EditPost = ({ post }: { post: Post | null }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!id) {
-      setError('Post ID is missing');
+      setError("Post ID is missing");
       return;
     }
     try {
@@ -39,10 +39,10 @@ export const EditPost = ({ post }: { post: Post | null }) => {
 
       const updatedPost = await updatePost(id, { title, content });
       dispatch(updatePostAction(updatedPost));
-      navigate('/');
+      navigate("/");
     } catch (err) {
       const error = err as AxiosError<{ message?: string }>;
-      setError(error.response?.data?.message || 'Failed to update post');
+      setError(error.response?.data?.message || "Failed to update post");
     }
   };
 
@@ -71,10 +71,7 @@ export const EditPost = ({ post }: { post: Post | null }) => {
             required
           />
         </div>
-        <Button
-          className="w-full p-2 rounded"
-          onClick={handleSubmit}
-          >
+        <Button className="w-full p-2 rounded" onClick={handleSubmit}>
           Update Post
         </Button>
       </form>
