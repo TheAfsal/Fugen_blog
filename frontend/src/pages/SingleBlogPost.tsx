@@ -10,16 +10,25 @@ import {
   Share2,
   Heart,
   MessageCircle,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import type { RootState } from "../store";
 import { deletePost as deletePostApi } from "../services/post.api";
 import { AxiosError } from "axios";
-import { deletePost } from "@/store/slices/postSlice";
+import { deletePost, setError } from "@/store/slices/postSlice";
 
 export const SingleBlogPost = () => {
   const { id } = useParams();
@@ -30,6 +39,8 @@ export const SingleBlogPost = () => {
 
   const post = posts.find((p) => p.id === id);
   const [isLiked, setIsLiked] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   const relatedPosts = posts.filter((p) => p.id !== id).slice(0, 3);
 
@@ -46,17 +57,21 @@ export const SingleBlogPost = () => {
 
   const handleShare = async () => {};
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async () => {
+    if (!id) return;
+    setIsDeleting(true);
     try {
       await deletePostApi(id);
       dispatch(deletePost(id));
+      navigate("/blog");
     } catch (err) {
       const error = err as AxiosError<{ message?: string }>;
-      console.log(error);
-
-      // dispatch(
-      //   setError(error.response?.data?.message || "Failed to delete post")
-      // );
+      dispatch(
+        setError(error.response?.data?.message || "Failed to delete post")
+      );
+    } finally {
+      setIsDeleting(false);
+      setIsConfirmOpen(false);
     }
   };
 
@@ -100,6 +115,7 @@ export const SingleBlogPost = () => {
                     size="sm"
                     onClick={() => navigate(`/edit/${post.id}`)}
                     className="border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
+                    disabled={isDeleting}
                   >
                     <Edit className="w-4 h-4 mr-2" />
                     Edit
@@ -108,10 +124,20 @@ export const SingleBlogPost = () => {
                     variant="outline"
                     size="sm"
                     className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white bg-transparent"
-                    onClick={() => handleDelete(post.id)}
+                    onClick={() => setIsConfirmOpen(true)}
+                    disabled={isDeleting}
                   >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Delete
+                    {isDeleting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Deleting...
+                      </>
+                    ) : (
+                      <>
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Delete
+                      </>
+                    )}
                   </Button>
                 </div>
               )}
@@ -149,6 +175,7 @@ export const SingleBlogPost = () => {
                   className={`flex items-center space-x-2 ${
                     isLiked ? "text-red-500" : "text-gray-500"
                   }`}
+                  disabled={isDeleting}
                 >
                   <Heart
                     className={`w-5 h-5 ${isLiked ? "fill-current" : ""}`}
@@ -160,6 +187,7 @@ export const SingleBlogPost = () => {
                   variant="ghost"
                   size="sm"
                   className="flex items-center space-x-2 text-gray-500"
+                  disabled={isDeleting}
                 >
                   <MessageCircle className="w-5 h-5" />
                   <span>12</span>
@@ -170,6 +198,7 @@ export const SingleBlogPost = () => {
                   size="sm"
                   onClick={handleShare}
                   className="flex items-center space-x-2 text-gray-500"
+                  disabled={isDeleting}
                 >
                   <Share2 className="w-5 h-5" />
                   <span>Share</span>
@@ -191,6 +220,41 @@ export const SingleBlogPost = () => {
             </div>
           </div>
         </motion.article>
+
+        {/* Delete Confirmation Dialog */}
+        <Dialog open={isConfirmOpen} onOpenChange={() => setIsConfirmOpen(false)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Confirm Deletion</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete this post? This action cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setIsConfirmOpen(false)}
+                disabled={isDeleting}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={handleDelete}
+                disabled={isDeleting}
+              >
+                {isDeleting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Deleting...
+                  </>
+                ) : (
+                  "Delete"
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
         {/* Related Posts */}
         {relatedPosts.length > 0 && (

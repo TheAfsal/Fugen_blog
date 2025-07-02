@@ -14,6 +14,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import type { RootState } from "../store";
 import { getPosts, deletePost as deletePostApi } from "../services/post.api";
 import {
@@ -24,6 +32,7 @@ import {
 } from "../store/slices/postSlice";
 import type { AxiosError } from "axios";
 
+// Custom debounce hook
 const useDebounce = <T,>(value: T, delay: number): T => {
   const [debouncedValue, setDebouncedValue] = useState(value);
 
@@ -47,6 +56,7 @@ export const BlogListPage = () => {
   const [limit] = useState(9);
   const [total, setTotal] = useState(0);
   const [deletingPostId, setDeletingPostId] = useState<string | null>(null);
+  const [confirmDeletePostId, setConfirmDeletePostId] = useState<string | null>(null);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
@@ -86,6 +96,7 @@ export const BlogListPage = () => {
       );
     } finally {
       setDeletingPostId(null);
+      setConfirmDeletePostId(null);
     }
   };
 
@@ -203,7 +214,7 @@ export const BlogListPage = () => {
         </motion.div>
 
         {/* Pagination */}
-        {!loading && !error && filteredPosts.length > 0 && (
+        {/* {!loading && !error && filteredPosts.length > 0 && (
           <div className="flex justify-between items-center mb-8">
             <Button
               onClick={() => handlePageChange(page - 1)}
@@ -223,7 +234,7 @@ export const BlogListPage = () => {
               Next
             </Button>
           </div>
-        )}
+        )} */}
 
         {/* Loading State */}
         {loading && (
@@ -319,21 +330,12 @@ export const BlogListPage = () => {
                               Edit
                             </DropdownMenuItem>
                             <DropdownMenuItem
-                              onClick={() => handleDelete(post.id)}
+                              onClick={() => setConfirmDeletePostId(post.id)}
                               className="text-red-600"
                               disabled={deletingPostId === post.id}
                             >
-                              {deletingPostId === post.id ? (
-                                <>
-                                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                  Deleting...
-                                </>
-                              ) : (
-                                <>
-                                  <Trash2 className="w-4 h-4 mr-2" />
-                                  Delete
-                                </>
-                              )}
+                              <Trash2 className="w-4 h-4 mr-2" />
+                              Delete
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -377,6 +379,41 @@ export const BlogListPage = () => {
             ))}
           </motion.div>
         </AnimatePresence>
+
+        {/* Delete Confirmation Dialog */}
+        <Dialog open={!!confirmDeletePostId} onOpenChange={() => setConfirmDeletePostId(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Confirm Deletion</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete this post? This action cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setConfirmDeletePostId(null)}
+                disabled={deletingPostId !== null}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => confirmDeletePostId && handleDelete(confirmDeletePostId)}
+                disabled={deletingPostId !== null}
+              >
+                {deletingPostId ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Deleting...
+                  </>
+                ) : (
+                  "Delete"
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
         {/* Pagination */}
         {!loading && !error && filteredPosts.length > 0 && (
