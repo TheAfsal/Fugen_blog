@@ -13,7 +13,7 @@ import { BlogListPage } from "./pages/BlogListPage";
 import { SingleBlogPost } from "./pages/SingleBlogPost";
 import { AboutPage } from "./pages/AboutPage";
 import { ContactPage } from "./pages/ContactPage";
-import { CreatePost } from "./components/CreatePost";
+import { CreatePost } from "./components/post/CreatePost";
 
 function App() {
   const dispatch = useDispatch();
@@ -32,6 +32,12 @@ function App() {
         }
       } catch (error) {
         console.error("Token verification failed:", error);
+        if (
+          window.location.pathname === "/create" ||
+          window.location.pathname.startsWith("/edit")
+        ) {
+          navigate("/login");
+        }
       }
     };
     checkAuth();

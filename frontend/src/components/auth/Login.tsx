@@ -1,18 +1,18 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { registerUser } from "../services/user.api";
-import { setCredentials } from "../store/slices/authSlice";
+import { loginUser } from "../../services/user.api";
+import { setCredentials } from "../../store/slices/authSlice";
 import { AxiosError } from "axios";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 import { Loader2 } from "lucide-react";
 import {
-  AuthenticateFormData,
   AuthenticateSchema,
+  AuthenticateFormData,
 } from "@/types/schema/AuthenticateSchema";
 
-export const Register = () => {
+export const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -33,12 +33,12 @@ export const Register = () => {
         return;
       }
 
-      const { user } = await registerUser(email, password);
+      const { user } = await loginUser(email, password);
       dispatch(setCredentials({ user }));
       navigate("/");
     } catch (err) {
       const error = err as AxiosError<{ message?: string }>;
-      setError(error.response?.data?.message || "Registration failed");
+      setError(error.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
     }
@@ -46,7 +46,7 @@ export const Register = () => {
 
   return (
     <div className="max-w-md mx-auto mt-30 p-6 rounded shadow">
-      <h2 className="text-2xl mb-4">Register</h2>
+      <h2 className="text-2xl mb-4">Login</h2>
       {error && <p className="text-red-500 mb-4">{error}</p>}
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
@@ -79,10 +79,10 @@ export const Register = () => {
           {loading ? (
             <>
               <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-              Registering...
+              Logging in...
             </>
           ) : (
-            "Register"
+            "Login"
           )}
         </Button>
       </form>

@@ -1,23 +1,13 @@
-"use client";
-
-import type React from "react";
-
-import { useState } from "react";
 import { motion } from "framer-motion";
-import {
-  Mail,
-  Phone,
-  MapPin,
-  Send,
-  MessageCircle,
-  Clock,
-  Globe,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
+import { Mail, Phone, MapPin, Clock, Globe } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Suspense, lazy } from "react";
+
+const ContactInfoCard = lazy(
+  () => import("@/components/contact/ContactInfoCar")
+);
+const ContactForm = lazy(() => import("@/components/contact/ContactForm"));
+const FAQItem = lazy(() => import("@/components/contact/FAQItem"));
 
 const contactInfo = [
   {
@@ -66,38 +56,6 @@ const faqs = [
 ];
 
 export const ContactPage = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    // Reset form
-    setFormData({ name: "", email: "", subject: "", message: "" });
-    setIsSubmitting(false);
-
-    // Show success message (you would implement this)
-    alert("Message sent successfully!");
-  };
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  };
-
   return (
     <div className="min-h-screen pt-20 pb-16">
       {/* Hero Section */}
@@ -111,9 +69,7 @@ export const ContactPage = () => {
             className="text-center"
           >
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              <span className="bg-gradient-to-r from-brand-primary to-brand-slate bg-clip-text text-transparent">
-                Get in Touch
-              </span>
+              <span>Get in Touch</span>
             </h1>
             <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
               Have questions? We'd love to hear from you. Send us a message and
@@ -127,33 +83,11 @@ export const ContactPage = () => {
       <section className="py-20 bg-gray-50 dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-            {contactInfo.map((info, index) => (
-              <motion.div
-                key={info.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: index * 0.2 }}
-                whileHover={{ y: -5 }}
-              >
-                <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-300">
-                  <CardContent className="p-8 text-center">
-                    <div
-                      className={`w-16 h-16 rounded-full bg-gradient-to-br from-white to-gray-100 dark:from-gray-800 dark:to-gray-700 flex items-center justify-center mx-auto mb-6 ${info.color}`}
-                    >
-                      <info.icon className="w-8 h-8" />
-                    </div>
-                    <h3 className="text-xl font-bold mb-2">{info.title}</h3>
-                    <p className="text-gray-600 dark:text-gray-300 mb-4">
-                      {info.description}
-                    </p>
-                    <p className="font-semibold text-brand-primary">
-                      {info.contact}
-                    </p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
+            <Suspense fallback={<div>Loading contact cards...</div>}>
+              {contactInfo.map((info, index) => (
+                <ContactInfoCard key={info.title} info={info} index={index} />
+              ))}
+            </Suspense>
           </div>
         </div>
       </section>
@@ -163,105 +97,9 @@ export const ContactPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Contact Form */}
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
-              <Card className="border-0 shadow-lg">
-                <CardHeader>
-                  <CardTitle className="text-2xl font-bold flex items-center">
-                    <MessageCircle className="w-6 h-6 mr-3 text-brand-primary" />
-                    Send us a Message
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-8">
-                  <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <Label htmlFor="name" className="text-sm font-medium">
-                          Name *
-                        </Label>
-                        <Input
-                          id="name"
-                          name="name"
-                          value={formData.name}
-                          onChange={handleChange}
-                          required
-                          className="h-12 rounded-xl border-2 focus:border-brand-mint"
-                          placeholder="Your full name"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="email" className="text-sm font-medium">
-                          Email *
-                        </Label>
-                        <Input
-                          id="email"
-                          name="email"
-                          type="email"
-                          value={formData.email}
-                          onChange={handleChange}
-                          required
-                          className="h-12 rounded-xl border-2 focus:border-brand-mint"
-                          placeholder="your@email.com"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="subject" className="text-sm font-medium">
-                        Subject *
-                      </Label>
-                      <Input
-                        id="subject"
-                        name="subject"
-                        value={formData.subject}
-                        onChange={handleChange}
-                        required
-                        className="h-12 rounded-xl border-2 focus:border-brand-mint"
-                        placeholder="What's this about?"
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="message" className="text-sm font-medium">
-                        Message *
-                      </Label>
-                      <Textarea
-                        id="message"
-                        name="message"
-                        value={formData.message}
-                        onChange={handleChange}
-                        required
-                        rows={6}
-                        className="rounded-xl border-2 focus:border-brand-mint resize-none"
-                        placeholder="Tell us more about your inquiry..."
-                      />
-                    </div>
-
-                    <Button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="w-full h-12 bg-brand-primary hover:bg-brand-primary/90 rounded-xl text-lg"
-                    >
-                      {isSubmitting ? (
-                        <div className="flex items-center">
-                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                          Sending...
-                        </div>
-                      ) : (
-                        <div className="flex items-center">
-                          <Send className="w-5 h-5 mr-2" />
-                          Send Message
-                        </div>
-                      )}
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-            </motion.div>
+            <Suspense fallback={<div>Loading contact form...</div>}>
+              <ContactForm />
+            </Suspense>
 
             {/* FAQ Section */}
             <motion.div
@@ -280,28 +118,18 @@ export const ContactPage = () => {
                 </p>
               </div>
 
-              <div className="space-y-6">
-                {faqs.map((faq, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                  >
-                    <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
-                      <CardContent className="p-6">
-                        <h3 className="font-bold mb-3 text-brand-primary">
-                          {faq.question}
-                        </h3>
-                        <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                          {faq.answer}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
+              <Suspense fallback={<div>Loading FAQs...</div>}>
+                <div className="space-y-6">
+                  {faqs.map((faq, index) => (
+                    <FAQItem
+                      key={index}
+                      question={faq.question}
+                      answer={faq.answer}
+                      index={index}
+                    />
+                  ))}
+                </div>
+              </Suspense>
 
               {/* Additional Info */}
               <motion.div

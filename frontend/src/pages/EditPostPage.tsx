@@ -1,7 +1,7 @@
-import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
-import { RootState } from '../store';
-import { EditPost } from '../components/EditPost';
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import { RootState } from "../store";
+import { EditPost } from "../components/post/EditPost";
 
 export const EditPostPage = () => {
   const { id } = useParams();

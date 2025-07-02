@@ -1,18 +1,20 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { createPost } from "../services/post.api";
-import { addPost } from "../store/slices/postSlice";
+import { registerUser } from "../../services/user.api";
+import { setCredentials } from "../../store/slices/authSlice";
 import { AxiosError } from "axios";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Textarea } from "./ui/textarea";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 import { Loader2 } from "lucide-react";
-import { PostFormData, PostSchema } from "@/types/schema/PostSchema";
+import {
+  AuthenticateFormData,
+  AuthenticateSchema,
+} from "@/types/schema/AuthenticateSchema";
 
-export const CreatePost = () => {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+export const Register = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
@@ -23,48 +25,48 @@ export const CreatePost = () => {
     setLoading(true);
     setError("");
     try {
-      const data: PostFormData = { title, content };
-      const result = PostSchema.safeParse(data);
+      const data: AuthenticateFormData = { email, password };
+      const result = AuthenticateSchema.safeParse(data);
       if (!result.success) {
         setError(result.error.errors[0].message);
         setLoading(false);
         return;
       }
 
-      const post = await createPost({ title, content });
-      dispatch(addPost(post));
+      const { user } = await registerUser(email, password);
+      dispatch(setCredentials({ user }));
       navigate("/");
     } catch (err) {
       const error = err as AxiosError<{ message?: string }>;
-      setError(error.response?.data?.message || "Failed to create post");
+      setError(error.response?.data?.message || "Registration failed");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-2xl mx-auto mt-10 p-6 bg-white rounded shadow">
-      <h2 className="text-2xl mb-4">Create Post</h2>
+    <div className="max-w-md mx-auto mt-30 p-6 rounded shadow">
+      <h2 className="text-2xl mb-4">Register</h2>
       {error && <p className="text-red-500 mb-4">{error}</p>}
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label className="block text-gray-700">Title</label>
+          <label className="block text-gray-700">Email</label>
           <Input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="w-full p-2 border rounded"
             required
             disabled={loading}
           />
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700">Content</label>
-          <Textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
+          <label className="block text-gray-700">Password</label>
+          <Input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             className="w-full p-2 border rounded"
-            rows={5}
             required
             disabled={loading}
           />
@@ -77,10 +79,10 @@ export const CreatePost = () => {
           {loading ? (
             <>
               <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-              Creating Post...
+              Registering...
             </>
           ) : (
-            "Create Post"
+            "Register"
           )}
         </Button>
       </form>

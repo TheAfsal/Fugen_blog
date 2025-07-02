@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { updatePost } from "../services/post.api";
-import { updatePost as updatePostAction } from "../store/slices/postSlice";
-import { Post } from "../types/Post";
+import { updatePost } from "../../services/post.api";
+import { updatePost as updatePostAction } from "../../store/slices/postSlice";
+import { Post } from "../../types/Post";
 import { AxiosError } from "axios";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Textarea } from "./ui/textarea";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
 import { Loader2 } from "lucide-react";
 import { PostFormData, PostSchema } from "@/types/schema/PostSchema";
 
