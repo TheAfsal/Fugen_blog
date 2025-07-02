@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Search, Filter, Calendar, Edit, Trash2, Eye } from "lucide-react";
+import { Search, Filter, Calendar, Edit, Trash2, Eye, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -24,12 +24,31 @@ import {
 } from "../store/slices/postSlice";
 import type { AxiosError } from "axios";
 
+const useDebounce = <T,>(value: T, delay: number): T => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+};
+
 export const BlogListPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("newest");
   const [page, setPage] = useState(1);
   const [limit] = useState(9);
   const [total, setTotal] = useState(0);
+  const [deletingPostId, setDeletingPostId] = useState<string | null>(null);
+
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   const { posts, loading, error } = useSelector(
     (state: RootState) => state.posts
@@ -42,7 +61,7 @@ export const BlogListPage = () => {
     const fetchPosts = async () => {
       dispatch(setLoading());
       try {
-        const data = await getPosts(page, limit, searchTerm);
+        const data = await getPosts(page, limit, debouncedSearchTerm);
         dispatch(setPosts(data.posts));
         setTotal(data.total);
       } catch (err) {
@@ -53,9 +72,10 @@ export const BlogListPage = () => {
       }
     };
     fetchPosts();
-  }, [dispatch, page, limit, searchTerm]);
+  }, [dispatch, page, limit, debouncedSearchTerm]);
 
   const handleDelete = async (id: string) => {
+    setDeletingPostId(id);
     try {
       await deletePostApi(id);
       dispatch(deletePost(id));
@@ -64,6 +84,8 @@ export const BlogListPage = () => {
       dispatch(
         setError(error.response?.data?.message || "Failed to delete post")
       );
+    } finally {
+      setDeletingPostId(null);
     }
   };
 
@@ -75,13 +97,9 @@ export const BlogListPage = () => {
   const filteredPosts = [...posts].sort((a, b) => {
     switch (sortBy) {
       case "newest":
-        return (
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
       case "oldest":
-        return (
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        );
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
       case "title":
         return a.title.localeCompare(b.title);
       default:
@@ -185,25 +203,27 @@ export const BlogListPage = () => {
         </motion.div>
 
         {/* Pagination */}
-        {/* <div className="flex justify-between items-center mb-8">
-          <Button
-            onClick={() => handlePageChange(page - 1)}
-            disabled={page === 1}
-            className="h-10 px-4"
-          >
-            Previous
-          </Button>
-          <span>
-            Page {page} of {totalPages}
-          </span>
-          <Button
-            onClick={() => handlePageChange(page + 1)}
-            disabled={page === totalPages}
-            className="h-10 px-4"
-          >
-            Next
-          </Button>
-        </div> */}
+        {!loading && !error && filteredPosts.length > 0 && (
+          <div className="flex justify-between items-center mb-8">
+            <Button
+              onClick={() => handlePageChange(page - 1)}
+              disabled={page === 1}
+              className="h-10 px-4"
+            >
+              Previous
+            </Button>
+            <span>
+              Page {page} of {totalPages}
+            </span>
+            <Button
+              onClick={() => handlePageChange(page + 1)}
+              disabled={page === totalPages}
+              className="h-10 px-4"
+            >
+              Next
+            </Button>
+          </div>
+        )}
 
         {/* Loading State */}
         {loading && (
@@ -301,9 +321,19 @@ export const BlogListPage = () => {
                             <DropdownMenuItem
                               onClick={() => handleDelete(post.id)}
                               className="text-red-600"
+                              disabled={deletingPostId === post.id}
                             >
-                              <Trash2 className="w-4 h-4 mr-2" />
-                              Delete
+                              {deletingPostId === post.id ? (
+                                <>
+                                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                  Deleting...
+                                </>
+                              ) : (
+                                <>
+                                  <Trash2 className="w-4 h-4 mr-2" />
+                                  Delete
+                                </>
+                              )}
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
