@@ -81,10 +81,9 @@ const PostCard = ({ post, userId, onDelete, isDeleting }: PostCardProps) => {
             </div>
           </div>
           <Button
-            variant="ghost"
+            // variant="ghost"
             size="sm"
             onClick={() => navigate(`/post/${post.id}`)}
-            className="text-brand-primary hover:text-brand-primary hover:bg-brand-mint/20"
           >
             Read More
           </Button>

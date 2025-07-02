@@ -128,7 +128,7 @@ export const Navbar = () => {
                     variant="ghost"
                     className="relative h-10 w-10 rounded-full"
                   >
-                    <Avatar className="h-10 w-10">
+                    <Avatar className="h-10 w-10 bg-amber-300">
                       <AvatarFallback className="bg-brand-mint text-brand-primary">
                         {user.email.charAt(0).toUpperCase()}
                       </AvatarFallback>

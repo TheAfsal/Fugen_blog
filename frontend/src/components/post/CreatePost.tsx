@@ -9,6 +9,7 @@ import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { Loader2 } from "lucide-react";
 import { PostFormData, PostSchema } from "@/types/schema/PostSchema";
+import { BackButton } from "./BackButton";
 
 export const CreatePost = () => {
   const [title, setTitle] = useState("");
@@ -44,6 +45,7 @@ export const CreatePost = () => {
 
   return (
     <div className="max-w-2xl mx-auto mt-10 p-6 bg-white rounded shadow">
+      <BackButton />
       <h2 className="text-2xl mb-4">Create Post</h2>
       {error && <p className="text-red-500 mb-4">{error}</p>}
       <form onSubmit={handleSubmit}>

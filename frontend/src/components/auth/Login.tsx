@@ -13,8 +13,8 @@ import {
 } from "@/types/schema/AuthenticateSchema";
 
 export const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("afsal@gmail.com");
+  const [password, setPassword] = useState("123123");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
